@@ -5,7 +5,7 @@ import VideoChatContainer from './VideoChatContainer'
 function App () {
   return (
     <div className='app'>
-      <h1>Live translator</h1>
+      <h1 id='title'>Live translator</h1>
       <VideoChatContainer/>
     </div>
   )

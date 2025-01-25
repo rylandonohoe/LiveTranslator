@@ -16,13 +16,13 @@ h1{
   font-size: 4rem;
   text-shadow: 1px 1px 4px black;
   font-family: 'Heading', sans-serif;
+  margin-top: 30vh;
 }
 .app{
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: 'Cabin', sans-serif;
-  padding-top: 30vh;
 }
 
 .app h3{
@@ -63,21 +63,24 @@ button:hover{
 }
 
 video{
-  width: 200px;
+  width: 40vw;
   height: 100%;
 }
 .form{
   display: flex;
   flex-direction: column;
   margin-top: 50px;
+  align-items: center;
 }
 .videos{
   display: none;
   justify-content: space-between;
-  
+
 }
 .active{
   display: flex;
+  gap: 20px;
+  align-items: center;
 }
 
 .videos div{
@@ -85,3 +88,6 @@ video{
   flex-direction: column-reverse;
   align-items: center;
 }
+
+
+

@@ -18,6 +18,8 @@ export default class VideoChat extends React.Component {
     this.setState({
       isLoggedIn: true
     })
+    document.querySelector('#title').style.display = 'none';
+
   }
 
   onStartCallClicked = () => {
