@@ -8,13 +8,13 @@ export default class VideoChat extends React.Component {
     super(props)
     this.state = {
       isLoggedIn: false,
-      userToCall: null,
-      username: null
+      userToCall: "",   // Default to empty string, not null
+      username: ""      // Default to empty string, not null
     }
   }
 
   onLoginClicked = async () => {
-  //  await this.props.onLogin(this.state.username)
+    await this.props.onLogin(this.state.username)
     this.setState({
       isLoggedIn: true
     })

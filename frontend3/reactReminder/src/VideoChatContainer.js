@@ -2,7 +2,7 @@ import React from 'react'
 import './App.css'
 import { createOffer, initiateConnection, startCall, sendAnswer, addCandidate, initiateLocalStream, listenToConnectionEvents } from './modules/RTCModule'
 import { initializeApp } from 'firebase/app'; // Import initializeApp from 'firebase/app'
-import { getDatabase } from 'firebase/database'; // Import getDatabase to access the Realtime Database
+import { getDatabase } from 'firebase/database';
 
 
 
@@ -28,8 +28,6 @@ class VideoChatContainer extends React.Component {
     const app = initializeApp(config);
     const database = getDatabase(app); // Get the Realtime Database instance
 
-
-
       // getting local video stream
       const localStream = await initiateLocalStream()
       this.localVideoRef.srcObject = localStream
@@ -37,7 +35,7 @@ class VideoChatContainer extends React.Component {
       const localConnection = await initiateConnection()
 
       this.setState({
-        database,
+        database: database,
         localStream,
         localConnection
       })
