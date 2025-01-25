@@ -12,14 +12,17 @@ body{
   background-attachment: fixed;
 }
 h1{
-  margin:0
+  margin:0;
+  font-size: 4rem;
+  text-shadow: 1px 1px 4px black;
+  font-family: 'Heading', sans-serif;
 }
 .app{
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: 'Cabin', sans-serif;
-  padding-top: 300px;
+  padding-top: 30vh;
 }
 
 .app h3{
@@ -48,11 +51,17 @@ button{
   background-color: #ffffff;
   border:none;
   box-shadow: 2px 2px 1px #18619d;
-  border-radius: 10px;
+  border-radius: 30px;
   margin-top: 10px;
   margin-bottom: 20px;
-  
 }
+
+button:hover{
+  background-color: #18619d;
+  color: white;
+  cursor: pointer;
+}
+
 video{
   width: 200px;
   height: 100%;
