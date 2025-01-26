@@ -9,7 +9,7 @@ from statistics import fmean
 #OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-CONFIDENCE_THRESHOLD = 4
+CONFIDENCE_THRESHOLD = .4
 
 def transcribe_audio(file_input, language="en"):
     """
@@ -30,7 +30,7 @@ def transcribe_audio(file_input, language="en"):
         segment_conf_list.append(exp(element.avg_logprob))
     if segment_conf_list:
         confidence = fmean(segment_conf_list)
-
+    print(confidence)
     if confidence < CONFIDENCE_THRESHOLD:
         return ""
     return transcription.text
