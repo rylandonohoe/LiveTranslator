@@ -1,4 +1,4 @@
-import React from 'react'; // Add React import to resolve JSX errors
+import React, { useContext } from 'react'; // Add React import to resolve JSX errors
 import './App.css';
 import { 
   createOffer, 
@@ -35,7 +35,9 @@ class VideoChatContainer extends React.Component {
 
   componentDidMount = async () => {
     const app = initializeApp(config);
+
     const database = getDatabase(app); // Get the Realtime Database instance
+
     
     // getting local video stream
     const localStream = await initiateLocalStream()
@@ -57,7 +59,7 @@ class VideoChatContainer extends React.Component {
     
     websocket.onopen = () => {
       console.log('WebSocket connected');
-      sendAudioStream(localStream, websocket); // Still send the audio data for other purposes
+      sendAudioStream(localStream, websocket, 'en'); // Still send the audio data for other purposes
     };
 
     websocket.onmessage = async (event) => {

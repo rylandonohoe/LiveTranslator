@@ -38,18 +38,54 @@ export const initiateConnection = async () => {
   }
 }
 
-export const sendAudioStream = async (audioStream, websocket) => {
+// export const sendAudioStream = async (audioStream, websocket) => {
+//   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+//   const source = audioContext.createMediaStreamSource(audioStream);
+//   const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+//   processor.onaudioprocess = (event) => {
+//     const audioData = event.inputBuffer.getChannelData(0); // Get the audio data
+//     const audioBuffer = new Float32Array(audioData.length);
+//     audioBuffer.set(audioData);
+
+//     // Send the audio buffer over WebSocket
+//     websocket.send(audioBuffer.buffer);
+//   };
+
+//   source.connect(processor);
+//   processor.connect(audioContext.destination);
+// };
+
+const arrayBufferToBase64 = (buffer) => {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const length = bytes.byteLength;
+  for (let i = 0; i < length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+};
+
+export const sendAudioStream = async (audioStream, websocket, selectedLang) => {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const source = audioContext.createMediaStreamSource(audioStream);
   const processor = audioContext.createScriptProcessor(4096, 1, 1);
+  console.log(selectedLang);
 
   processor.onaudioprocess = (event) => {
     const audioData = event.inputBuffer.getChannelData(0); // Get the audio data
     const audioBuffer = new Float32Array(audioData.length);
     audioBuffer.set(audioData);
+    const audioBase64 = arrayBufferToBase64(audioBuffer.buffer);
+
+    // Create a JSON object with the audio and selected language
+    const message = {
+      audio: audioBase64,
+      language: selectedLang
+    };
 
     // Send the audio buffer over WebSocket
-    websocket.send(audioBuffer.buffer);
+    websocket.send(JSON.stringify(message));
   };
 
   source.connect(processor);
