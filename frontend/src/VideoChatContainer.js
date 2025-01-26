@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'; // Add React import to resolve JSX errors
+import React from 'react'; // Add React import to resolve JSX errors
 import './App.css';
 import { 
   createOffer, 
@@ -33,11 +33,55 @@ class VideoChatContainer extends React.Component {
     this.remoteVideoRef = React.createRef()
   }
 
+  createAudioTrackFromBuffer = async (audioContext, arrayBuffer) => {
+    try {
+      // Decode audio data
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  
+      // Create audio destination to generate a media stream track
+      const audioDestination = audioContext.createMediaStreamDestination();
+  
+      // Create buffer source and connect to destination
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioDestination);
+      source.start();
+  
+      // Return the first audio track from the generated stream
+      return audioDestination.stream.getAudioTracks()[0];
+    } catch (error) {
+      console.error('Error creating audio track:', error);
+      return null;
+    }
+  };
+  
+  createMediaStreamFromArrayBuffer = async (arrayBuffer) => {
+    const { audioContext } = this.state;
+    
+    try {
+      // Decode the audio data into an AudioBuffer
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      const audioSource = audioContext.createBufferSource();
+      audioSource.buffer = audioBuffer;
+  
+      // Create a MediaStream destination
+      const destination = audioContext.createMediaStreamDestination();
+  
+      // Connect the audio source to the destination
+      audioSource.connect(destination);
+      audioSource.start();
+  
+      // Return the MediaStream from the destination
+      return destination.stream;
+    } catch (error) {
+      console.error('Error creating media stream:', error);
+      return null;
+    }
+  };
+
   componentDidMount = async () => {
     const app = initializeApp(config);
-
     const database = getDatabase(app); // Get the Realtime Database instance
-
     
     // getting local video stream
     const localStream = await initiateLocalStream()
@@ -59,19 +103,65 @@ class VideoChatContainer extends React.Component {
     
     websocket.onopen = () => {
       console.log('WebSocket connected');
-      sendAudioStream(localStream, websocket, 'en'); // Still send the audio data for other purposes
+      sendAudioStream(localStream, websocket); // Still send the audio data for other purposes
     };
+
+
+    let audioData = [];
     websocket.onmessage = async (event) => {
-      console.log(event.data);
-      
+      console.log('Received message:', event);
+    
       if (typeof event.data === 'string') {
-        console.log('Metadata:', event.data); // Handle metadata
-      } else if (event.data instanceof Blob) {
-        // If the received data is a Blob (audio), convert it into a MediaStream
-        const audioBuffer = await this.convertBlobToAudioBuffer(event.data);
-        this.playIncomingAudio(audioBuffer);
+        console.log('Metadata:', event.data);
+        return;
+      }
+  
+      try {
+        // Handle blob or arraybuffer data
+        const arrayBuffer = event.data instanceof Blob 
+          ? await event.data.arrayBuffer() 
+          : event.data;
+          console.log('Received arrayBuffer:', arrayBuffer);
+        // Create audio track
+        const audioTrack = await this.createAudioTrackFromBuffer(this.state.audioContext, arrayBuffer);
+        console.log('Created audio track:', audioTrack);
+        if (!audioTrack) {
+          console.error('Failed to create audio track');
+          return;
+        }
+        // audioData.push(audioTrack);
+        // Create media stream with the audio track
+        const modifiedMediaStream = new MediaStream([audioTrack]);
+  
+        if (this.remoteVideoRef) {
+          // Combine incoming audio with existing stream
+          const combinedStream = new MediaStream();
+          
+          // Add incoming audio track
+          modifiedMediaStream.getTracks().forEach(track => combinedStream.addTrack(track));
+  
+          // Preserve existing video tracks if present
+          if (this.state.localStream) {
+            this.state.localStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+          }
+  
+          // Update remote video source
+          this.remoteVideoRef.srcObject = combinedStream;
+          this.localStream = combinedStream;
+          console.log('Updated remote video srcObject:', this.localStream.getAudioTracks());
+          console.log('Updated remote video srcObject:', this.remoteVideoRef.srcObject);
+        } else {
+          console.error('remoteVideoRef is undefined');
+        }
+      } catch (error) {
+        console.error('Error processing incoming audio data:', error);
       }
     };
+    
+    // audioData.forEach((audioTrack) => {
+    //   const modifiedMediaStream = new MediaStream([audioTrack]);
+    //   this.localStream.addTrack(modifiedMediaStream);
+    // });
   
     const localConnection = await initiateConnection();
     this.setState({
@@ -81,18 +171,6 @@ class VideoChatContainer extends React.Component {
       websocket,
     });
   };
-
-  async convertBlobToAudioBuffer(blob) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Convert Blob to ArrayBuffer
-    const arrayBuffer = await blob.arrayBuffer();
-    
-    // Decode the ArrayBuffer to get the AudioBuffer
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    
-    return audioBuffer;
-  }
 
   loadWavFile = async (audioContext) => {
     try {
@@ -116,42 +194,36 @@ class VideoChatContainer extends React.Component {
     }
   };
 
-  playIncomingAudio(audioBuffer) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Create an AudioBufferSourceNode and connect it to the audio context
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    
-    // Create a MediaStreamAudioDestinationNode to generate the stream
-    const destination = audioContext.createMediaStreamDestination();
-    
-    // Connect the source to the destination
-    source.connect(destination);
-    
-    // Start playing the audio
-    source.start();
-    
-    // You now have a MediaStream (destination.stream) that you can use for WebRTC
-    const mediaStream = destination.stream;
-    
-    // Here you can attach `mediaStream` to your WebRTC connection
-    this.sendAudioToWebRTC(mediaStream);
-  }
+  playIncomingAudio = async (audioBuffer) => {
+    try {
+      // Here you can collect the incoming audio data (for monitoring or other purposes)
+      // But don't play it through speakers
+      console.log('Processing live audio data...');
 
-  sendAudioToWebRTC(mediaStream) {
-    const { localConnection } = this.state;
-
-    // Add the audio stream to the peer connection
-    mediaStream.getAudioTracks().forEach(track => {
-      localConnection.addTrack(track, mediaStream);
-    });
-
-    // Send the offer to the remote peer
-    localConnection.createOffer().then(offer => {
-      localConnection.setLocalDescription(offer);}
-    );
-  }
+      // If needed, you could store or process the incoming audio data here.
+    } catch (error) {
+      console.error('Error processing incoming audio:', error);
+    }
+  };
+  // createMediaStreamFromArrayBuffer = (arrayBuffer) => {
+  //   const audioContext = this.state.audioContext;
+  
+  //   // Decode the audio data into an AudioBuffer
+  //   return audioContext.decodeAudioData(arrayBuffer).then((audioBuffer) => {
+  //     const audioSource = audioContext.createBufferSource();
+  //     audioSource.buffer = audioBuffer;
+  
+  //     // Create a MediaStream destination
+  //     const destination = audioContext.createMediaStreamDestination();
+  
+  //     // Connect the audio source to the destination
+  //     audioSource.connect(destination);
+  //     audioSource.start();
+  
+  //     // Return the MediaStream from the destination
+  //     return destination.stream;
+  //   });
+  // };
   
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -170,7 +242,6 @@ class VideoChatContainer extends React.Component {
   startCall = async (username, userToCall) => {
     const { localConnection, database, localStream } = this.state;
     listenToConnectionEvents(localConnection, username, userToCall, database, this.remoteVideoRef, doCandidate);
-
     createOffer(localConnection, localStream, userToCall, doOffer, database, username);
   };
 

@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import json
 import os
 import websockets
+import time
 
 load_dotenv()
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
@@ -19,6 +20,7 @@ async def listen_and_forward(frontend_websocket, api_websocket):
                 # decode audio chunk and send to frontend
                 audio_chunk = base64.b64decode(data["audio"])
                 await frontend_websocket.send(audio_chunk)
+                time.sleep(1)
                 #print("[INFO] Sent audio chunk to frontend.")
             elif data.get("isFinal"):
                 #print("[INFO] Final audio chunk received. Processing complete.")
