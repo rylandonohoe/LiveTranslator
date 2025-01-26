@@ -10,9 +10,23 @@ export default class VideoChat extends React.Component {
       isLoggedIn: false,
       userToCall: "",   // Default to empty string, not null
       username: "",     // Default to empty string, not null
-      errorMessage: null
+      errorMessage: null,
+      showModal: false, 
+      selectedLang: '/america.jpg',
     }
   }
+
+  toggleModal = () => {
+    this.setState((prevState) => ({ showModal: !prevState.showModal }));
+  };
+
+  // Handle language selection
+  selectLanguage = (lang) => {
+    this.setState({
+      selectedLang: lang,
+      showModal: false, 
+    });
+  };
 
   onLoginClicked = async () => {
     if (!this.state.username) {
@@ -35,24 +49,55 @@ export default class VideoChat extends React.Component {
 
   renderVideos = () => {
     return <>
-    <div className={classnames('videos', { active: this.state.isLoggedIn })}>
-      <div className='my-video'>
-        <video ref={this.props.setLocalVideoRef} autoPlay playsInline></video>
-        <div className='lang-toggle'>
-            <button onClick={this.props.toggleLang} className='toggle-btn'>
-              <img src="./assets/america.jpg" alt="English" class="flag" />
-            </button>
-            <button onClick={this.props.toggleLang} className='toggle-btn'></button>
-            <button onClick={this.props.toggleLang} className='toggle-btn'></button>
+    {this.state.isLoggedIn ? 
+    <div className='lang-toggle-container'>
+      <div className='lang-toggle'>
+            <button onClick={this.toggleModal} className="toggle-btn">
+                <img
+                  src={this.state.selectedLang}
+                  alt="Selected Language"
+                  className="flag"
+                />
+              </button>
+                </div></div> : null}
+
+        <div className={classnames('videos', { active: this.state.isLoggedIn })}>
+          <div className='my-video'>
+            <video ref={this.props.setLocalVideoRef} autoPlay playsInline></video>
+            <div className='name-container'>
+              <label id='username' className='username'>{this.state.username}</label>
+            </div>
+          </div>
+          <div className='my-video'>
+            <video ref={this.props.setRemoteVideoRef} autoPlay playsInline></video>
+            {this.props.connectedUser ? 
+              <div className='name-container'>
+                <label id='username' className='username'>{this.props.connectedUser}</label> 
+              </div> : null}
+          </div>
         </div>
-        <label id='username' className='username'>{this.state.username}</label>
-      </div>
-      <div className='my-video'>
-        <video ref={this.props.setRemoteVideoRef} autoPlay playsInline></video>
-        <label id='username' className='username'>{this.props.connectedUser}</label>
-      </div>
-    </div>
-    </>
+        {this.state.showModal && (
+              <div className="modal">
+                <div className="modal-content">
+                  <p>Select Language</p>
+                  <div className="modal-languages">
+                    <button onClick={() => this.selectLanguage('/america.jpg')}>
+                      <img src="/america.jpg" alt="English" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/france.png')}>
+                      <img src="/france.png" alt="French" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/spain.png')}>
+                      <img src="/spain.png" alt="Spanish" className="flag" />
+                    </button>
+                  </div>
+                  <button onClick={this.toggleModal} className="close-btn">
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+        </>
   }
 
   renderForms = () => {
