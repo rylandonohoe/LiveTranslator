@@ -73,11 +73,11 @@ export const listenToConnectionEvents = (conn, username, remoteUsername, databas
     }
   };
   
-  // conn.ontrack = function (e) {
-  //   if (remoteVideoRef.srcObject !== e.streams[0]) {
-  //     remoteVideoRef.srcObject = e.streams[0]
-  //   }
-  // }
+   conn.ontrack = function (e) {
+     if (remoteVideoRef.srcObject !== e.streams[0]) {
+       remoteVideoRef.srcObject = e.streams[0]
+     }
+   }
 }
 
 export const sendAnswer = async (conn, localStream, notif, doAnswer, database, username) => {
