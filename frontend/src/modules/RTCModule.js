@@ -40,27 +40,21 @@ export const initiateConnection = async () => {
 
 export const sendAudioStream = async (audioStream, websocket) => {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  const analyser = audioContext.createAnalyser();
-  const microphone = audioContext.createMediaStreamSource(audioStream);
-  microphone.connect(analyser);
-  
-  const bufferLength = analyser.fftSize;
-  const dataArray = new Uint8Array(bufferLength);
+  const source = audioContext.createMediaStreamSource(audioStream);
+  const processor = audioContext.createScriptProcessor(4096, 1, 1);
 
-  // Continuously get audio data and send it over the WebSocket
-  const processAudioData = () => {
-    analyser.getByteFrequencyData(dataArray);
+  processor.onaudioprocess = (event) => {
+    const audioData = event.inputBuffer.getChannelData(0); // Get the audio data
+    const audioBuffer = new Float32Array(audioData.length);
+    audioBuffer.set(audioData);
 
-    // Convert to a buffer and send over the WebSocket
-    const audioBuffer = new Float32Array(dataArray).buffer;
-    websocket.send(audioBuffer);
-
-    // Repeat the process every 100ms or any other suitable interval
-    setTimeout(processAudioData, 100);
+    // Send the audio buffer over WebSocket
+    websocket.send(audioBuffer.buffer);
   };
 
-  processAudioData();
-}
+  source.connect(processor);
+  processor.connect(audioContext.destination);
+};
 
 export const listenToConnectionEvents = (conn, username, remoteUsername, database, remoteVideoRef, doCandidate) => {
   conn.onicecandidate = function (event) {
@@ -79,11 +73,11 @@ export const listenToConnectionEvents = (conn, username, remoteUsername, databas
     }
   };
   
-  // conn.ontrack = function (e) {
-  //   if (remoteVideoRef.srcObject !== e.streams[0]) {
-  //     remoteVideoRef.srcObject = e.streams[0]
-  //   }
-  // }
+   conn.ontrack = function (e) {
+     if (remoteVideoRef.srcObject !== e.streams[0]) {
+       remoteVideoRef.srcObject = e.streams[0]
+     }
+   }
 }
 
 export const sendAnswer = async (conn, localStream, notif, doAnswer, database, username) => {

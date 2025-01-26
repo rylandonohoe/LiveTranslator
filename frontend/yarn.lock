@@ -2430,6 +2430,15 @@ autoprefixer@^9.6.1:
     postcss "^7.0.23"
     postcss-value-parser "^4.0.2"
 
+av@~0.4.0:
+  version "0.4.9"
+  resolved "https://registry.npmjs.org/av/-/av-0.4.9.tgz"
+  integrity sha512-MvkT0k+co6o+zLMrBFFeVhYcG/S/jzy+2p00c/VwA71q6g90J28qUNh93NabKrcN06bkwFK0OeiEpFsQd7TS7g==
+  dependencies:
+    coffeeify "^0.6.0"
+  optionalDependencies:
+    speaker "^0.3.0"
+
 aws-sign2@~0.7.0:
   version "0.7.0"
   resolved "https://registry.npmjs.org/aws-sign2/-/aws-sign2-0.7.0.tgz"
@@ -3151,6 +3160,22 @@ code-point-at@^1.0.0:
   resolved "https://registry.npmjs.org/code-point-at/-/code-point-at-1.1.0.tgz"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
+coffee-script@~1.7.0:
+  version "1.7.1"
+  resolved "https://registry.npmjs.org/coffee-script/-/coffee-script-1.7.1.tgz"
+  integrity sha512-W3s+SROY73OmrSGtPTTW/2wp2rmW5vuh0/tUuCK1NvTuyzLOVPccIP9whmhZ4cYWcr2NJPNENZIFaAMkTD5G3w==
+  dependencies:
+    mkdirp "~0.3.5"
+
+coffeeify@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.npmjs.org/coffeeify/-/coffeeify-0.6.0.tgz"
+  integrity sha512-nt2rZwyeqLnzdbC15ZUBnQtokHLqNnbgfpUMYzAk1Pa33hObdtXnDV0SmTj2DWbzp47MpR87ix3uKHyutnzjsg==
+  dependencies:
+    coffee-script "~1.7.0"
+    convert-source-map "~0.3.3"
+    through "~2.3.4"
+
 collection-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/collection-visit/-/collection-visit-1.0.0.tgz"
@@ -3326,6 +3351,11 @@ convert-source-map@^1.1.0, convert-source-map@^1.4.0:
   integrity sha512-4FJkXzKXEDB1snCFZlLP4gpC3JILicCpGbzG9f9G7tGqGCzETQ2hWPrcinA9oU4wtf2biUaEH5065UnMeR33oA==
   dependencies:
     safe-buffer "~5.1.1"
+
+convert-source-map@~0.3.3:
+  version "0.3.5"
+  resolved "https://registry.npmjs.org/convert-source-map/-/convert-source-map-0.3.5.tgz"
+  integrity sha512-+4nRk0k3oEpwUB7/CalD7xE2z4VmtEnnq0GO2IPTkrooTrAhEsWvuLF5iWP1dXrwluki/azwXV1ve7gtYuPldg==
 
 convert-source-map@1.6.0:
   version "1.6.0"
@@ -4882,6 +4912,11 @@ firebase@^11.2.0:
     "@firebase/storage-compat" "0.3.15"
     "@firebase/util" "1.10.3"
     "@firebase/vertexai" "1.0.3"
+
+flac.js@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/flac.js/-/flac.js-0.2.1.tgz"
+  integrity sha512-tmMqtlmQUidl8WFtTv1TjVc9XA9u0QNTbjqq21PepsLfYfK5XAgGnCLgcIuXHtHldmnzzhy+BD5X/RQFoL3/yA==
 
 flat-cache@^2.0.1:
   version "2.0.1"
@@ -7083,6 +7118,11 @@ mkdirp@^0.5.1, mkdirp@~0.5.1, mkdirp@0.5.1:
   integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
   dependencies:
     minimist "0.0.8"
+
+mkdirp@~0.3.5:
+  version "0.3.5"
+  resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.5.tgz"
+  integrity sha512-8OCq0De/h9ZxseqzCH8Kw/Filf5pF/vMI6+BH7Lu0jXz2pqYCjTAQRolSxRIi+Ax+oCCjlxoJMP0YQ4XlrQNHg==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -10376,7 +10416,7 @@ throat@^4.0.0:
   resolved "https://registry.npmjs.org/throat/-/throat-4.1.0.tgz"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
 
-through@^2.3.6:
+through@^2.3.6, through@~2.3.4:
   version "2.3.8"
   resolved "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=

@@ -10,7 +10,7 @@ from translator import translate
 file_q = queue.Queue()
 grp = 0
 RMS_THRESHOLD = 300
-CHUNK_THRESHOLD = 100
+CHUNK_THRESHOLD = 60
 
 
 def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
@@ -19,7 +19,7 @@ def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
         audioChunks.append(wav_segment)
         return
 
-    print(wav_segment.rms)
+    #print(wav_segment.rms)
     # if wav_segment.rms < RMS_THRESHOLD:
     if len(audioChunks) > CHUNK_THRESHOLD:
         # print("- SILENCE DETECTED -")
@@ -38,8 +38,9 @@ def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
         audioChunks.clear()
         grp += 1
     else:
-        print("The audio is not silent, process it")
+        #print("The audio is not silent, process it")
         audioChunks.append(wav_segment)
+
 
 def file_queue_processor(websocket):
     """
@@ -61,18 +62,17 @@ async def _worker(websocket):
     """
     while True:
         try:
-            if websocket.closed:
-                return
-
             if not file_q.empty():
                 # each item in the queue is an instance of FileTranslateRequestModel
                 translate_request = file_q.get()
+                print("found file: " + translate_request.path)
 
                 start_time = time.time()
                 transcription = transcribe_audio(file_input=translate_request.path,
                                                  language=translate_request.from_lang)
+                print(transcription)
                 end_time = time.time()
-                transcription_time = end_time - start_time  # f"{end_time - start_time:.3f} s"
+                transcription_time = end_time - start_time
 
                 # delete the file after processing to save space
                 os.remove(translate_request.path)
@@ -85,6 +85,7 @@ async def _worker(websocket):
 
                     start_time = time.time()
                     translation = translate(transcription, translate_request.to_lang)
+                    print(translation)
                     end_time = time.time()
                     translation_time = end_time - start_time
 
@@ -97,5 +98,3 @@ async def _worker(websocket):
             file_q.task_done()
             print(e)
             # break
-
-
