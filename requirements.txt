@@ -1,6 +1,8 @@
 asyncio==3.4.3
 elevenlabs==1.50.5
 numpy==2.2.2
+openai==1.60.1
+pydub==0.25.1
 python-dotenv==1.0.1
 SpeechRecognition==3.14.1
 websockets==14.2

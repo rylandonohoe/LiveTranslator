@@ -1,9 +1,9 @@
 import asyncio
-from text_to_speech import handle_tts_request
 from models.translate_request_model import TranslateRequestModel
 import os
 from pydub import AudioSegment
 import queue
+from text_to_speech import handle_tts_request
 import time
 from transcription import transcribe_audio
 from translator import translate
