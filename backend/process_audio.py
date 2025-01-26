@@ -76,7 +76,7 @@ async def _worker(websocket):
                 if transcription:
                     # if language_from and language_to is the same, its just a transcription
                     if translate_request.from_lang == translate_request.to_lang:
-                        await handle_tts_request(websocket, transcription, "NNcatZob7g5UoSGj0rqf")
+                        await handle_tts_request(websocket, transcription, "J5VtlQALEEjHZn4xrabB")
 
                     start_time = time.time()
                     translation = translate(transcription, translate_request.to_lang)
@@ -84,7 +84,7 @@ async def _worker(websocket):
                     end_time = time.time()
                     translation_time = end_time - start_time
 
-                    await handle_tts_request(websocket, translation, "NNcatZob7g5UoSGj0rqf")
+                    await handle_tts_request(websocket, translation, "J5VtlQALEEjHZn4xrabB")
 
                 file_q.task_done()
 
