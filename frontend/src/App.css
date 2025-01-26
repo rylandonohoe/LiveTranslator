@@ -1,15 +1,43 @@
-
-body{
-  color: white;
-
-  background: #43cea2; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #43cea2, #185a9d); /* Chrome 10-25, Safari 5.1-6 */
-  /* background: linear-gradient(to right, #111848, #185a9d); */
-  background: linear-gradient(to right, #ff853f, #e7b977);
-
+/* App-wide styles */
+body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.app {
+  height: 120vh; /* Full height */
+}
+
+.app.logged-in {
+  background-image: url('./assets/images/hero2.jpg'); /* Ensure path is correct */
+  background-size: contain; /* Adjust to fit without cutting off */
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  min-height: 100vh; /* Ensure container spans the full viewport height */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+  padding: 0.71rem; /* Add uniform padding */
+  overflow-y: auto; /* Allow vertical scrolling if content overflows */
+  overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+.title-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  font-family: 'Cabin', sans-serif;
+  height: 100vh; /* Full viewport height */
+  background-image: url('./assets/images/hero.jpg'); /* Update path for hero.jpg */
+  background-size: cover; /* Ensure the image covers the container */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent tiling */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Subtle text shadow for readability */
+  color: white;
 }
 
 h1{
@@ -19,21 +47,24 @@ h1{
   font-family: 'Heading', sans-serif;
 }
 
-.title-page{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: 'Cabin', sans-serif;
-  margin-top: 28vh;
-}
-
 .title-page h1 {
   transition: text-shadow 0.3s ease-in-out;
+  position: relative;
+  top: -11%;
+  color: #fd7b30;
 }
 
 .title-page h1:hover {
   text-shadow: 0px 0px 15px rgba(255, 255, 255, 0.6), 0px 0px 10px rgba(255, 255, 255, 0.6), 0px 0px 45px rgba(255, 255, 255, 0.4);
-  color: #fff; 
+  color: #c7510c; 
+}
+
+.title-page h2 {
+  text-shadow: 1px 1px 4px rgb(184, 184, 184);
+  font-size: 1.5rem;
+  position: relative;
+  top: -11%;
+  color: #c7510c;
 }
 
 .app h3{
@@ -57,14 +88,20 @@ h1{
   margin-bottom: 4px;
 }
 
+.highlight {
+  color: #fd7b30;
+  font-weight: bold;
+}
+
 button{
   width: 100px;
   height:40px;
-  background-color: #ffffff;
+  font-size: 1rem;
+  color: #c7510c;
   border:none;
   box-shadow: 2px 2px 6px #000000;
   border-radius: 30px;
-  margin-top: 2vh;
+  margin-top: 3vh;
   margin-bottom: 20px;
 }
 
@@ -78,28 +115,63 @@ video{
   width: 50vw;
   height: 100%;
 }
-.form{
+
+.form {
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
   align-items: center;
+  margin-top: 20px; /* Reduce the margin so it's closer to the title */
   z-index: 1;
+  position: relative;
+  top: -48vh; /* Move the form up slightly */
+  color: #c7510c;
+  font-size: 1.1rem;
 }
 
 .form2 {
-  display: flex ;
+  position: absolute; /* Position it relative to its parent container */
+  bottom: 145px; /* Adjust the distance from the bottom */
+  right: 39vw; /* Keep it slightly away from the right edge */
+  display: flex;
   flex-direction: row;
-  justify-content: right;
-  margin-top: -19vh !important;
-  margin-right: 3vw;
+  justify-content: flex-end; /* Align items to the right */
   gap: 2vw;
-  input {
-    width: 20vw;
-    margin-top: 1.4vh;
-    border-radius: 20px;
-    border: none;
-    box-shadow: 1px 1px 5px #0c1d2e;
-  }
+}
+
+.form2 input {
+  width: 20vw;
+  height: 52px; /* Ensure consistent height */
+  margin: 0; /* Remove any top margin */
+  border-radius: 20px;
+  border: none;
+  box-shadow: 1px 1px 5px #0c1d2e;
+  padding-left: 10px; /* Add padding for text inside input */
+  font-size: 1.3rem;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Placeholder specific styles */
+.form3::placeholder {
+  font-style: italic;
+  font-size: 1.2rem;
+}
+
+.form-input {
+  width: 400px;
+  height: 40px;
+  padding-left: 20px;
+  border-radius: 20px;
+  border: 1px solid #c7510c;
+  box-shadow: 1px 1px 5px #0c1d2e;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-family: 'Arial', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Placeholder specific styles */
+.form-input::placeholder {
+  font-style: italic;
 }
 
 .videos{
@@ -107,7 +179,10 @@ video{
   flex-direction: row;
   justify-content: center;
   position: absolute;
+  top: -4vh;
+  left: 0vw;
 }
+
 .active{
   display: flex;
   margin-top: 3vh;
@@ -127,6 +202,8 @@ video{
 }
 
 video {
+  width: 50vw;
+  height: auto;
   transform: scaleX(-1);
 }
 
@@ -150,33 +227,33 @@ h2 {
   margin-top: 3vh;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
-
 .lang-toggle-container {
+  position: absolute; /* Position it relative to the parent container */
+  bottom: 145px; /* Adjust the distance from the bottom of the container */
+  left: 35%; /* Center it horizontally */
+  transform: translateX(-50%); /* Center it perfectly by adjusting for width */
   display: flex;
   justify-content: center;
-  margin-top: 3vh;
+  z-index: 2; /* Ensure it stays above the video */
 }
 
 .lang-toggle {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 36px;
-  margin-top: -13vh;
   width: 6vw;
   height: 9vh;
   border-radius: 40px;
   background-color: #ffffff;
   border: none;
   box-shadow: 2px 2px 6px #000000;
-  z-index: 1;
 }
 
 .toggle-btn {
   width: 40px;
   display: flex;
-  margin-top: 19px;
+  margin: 0; /* Remove any extra margins */
   justify-content: center;
   align-items: center;
   background-color: transparent;
@@ -190,6 +267,17 @@ h2 {
 .toggle-btn:hover {
   background-color: #f0f0f0;
   transform: scale(1.2);
+}
+
+.call {
+  position: absolute; /* Position it relative to the parent container */
+  bottom: -20px; /* Adjust the distance from the bottom of the container */
+  height: 72px;
+  width: 90px;
+  border-radius: 40px;
+  left: 107.3%; /* Center it horizontally */
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
 .flag {
@@ -217,7 +305,7 @@ h2 {
   color: black;
   padding: 20px;
   border-radius: 25px;
-  width: 300px;
+  width: 800px;
   text-align: center;
   font-weight: bold;
   font-size: 1.2rem;
@@ -231,7 +319,7 @@ h2 {
 
 .modal-languages {
   display: flex;
-  justify-content: center;
+  padding: 20px;
   gap: 4vw;
   margin: 20px 0;
 }
