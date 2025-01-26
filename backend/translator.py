@@ -10,5 +10,5 @@ def translate(text, to):
     }
     response = requests.post(url, json=data, headers=headers)
     ans = response.json()
-    print(ans['translatedText'])
+    #print(ans['translatedText'])
     return ans['translatedText']

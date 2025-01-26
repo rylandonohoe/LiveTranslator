@@ -1,10 +1,11 @@
-import queue
 import asyncio
-import time
+from text_to_speech import handle_tts_request
+from models.translate_request_model import TranslateRequestModel
 import os
 from pydub import AudioSegment
+import queue
+import time
 from transcription import transcribe_audio
-from models.translate_request_model import TranslateRequestModel
 from translator import translate
 
 file_q = queue.Queue()
@@ -12,18 +13,14 @@ grp = 0
 RMS_THRESHOLD = 300
 CHUNK_THRESHOLD = 60
 
-
 def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
     global grp
     if len(audioChunks) < 2:
         audioChunks.append(wav_segment)
         return
 
-    #print(wav_segment.rms)
-    # if wav_segment.rms < RMS_THRESHOLD:
     if len(audioChunks) > CHUNK_THRESHOLD:
-        # print("- SILENCE DETECTED -")
-        print("threshold reached")
+        #print("threshold reached")
 
         # combine each item in the audio chunk and export into a .wav file
         combined_sounds = audioChunks[0]
@@ -39,13 +36,13 @@ def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
         grp += 1
     else:
         #print("The audio is not silent, process it")
-        audioChunks.append(wav_segment)
 
+        audioChunks.append(wav_segment)
 
 def file_queue_processor(websocket):
     """
-    Threaded process that keeps waiting for data to be pushed into the file queue
-    it will process each item sequentially and transform it before sending back to the client
+    Threaded process that keeps waiting for data to be pushed into the file queue it will
+    process each item sequentially and transform it before sending back to the client.
     """
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -56,21 +53,20 @@ def file_queue_processor(websocket):
 
 async def _worker(websocket):
     """
-    threaded worker to process the audio file queue
-      transcribe it through the Whisper Model
-      and send it back to client
+    Threaded worker to process the audio file queue transcribe
+    it through the Whisper Model and send it back to client.
     """
     while True:
         try:
             if not file_q.empty():
                 # each item in the queue is an instance of FileTranslateRequestModel
                 translate_request = file_q.get()
-                print("found file: " + translate_request.path)
+                #print("found file: " + translate_request.path)
 
                 start_time = time.time()
                 transcription = transcribe_audio(file_input=translate_request.path,
                                                  language=translate_request.from_lang)
-                print(transcription)
+                print(f"[O] {transcription}")
                 end_time = time.time()
                 transcription_time = end_time - start_time
 
@@ -80,16 +76,15 @@ async def _worker(websocket):
                 if transcription:
                     # if language_from and language_to is the same, its just a transcription
                     if translate_request.from_lang == translate_request.to_lang:
-                        # call Rylan's thing
-                        pass
+                        await handle_tts_request(websocket, transcription, "NNcatZob7g5UoSGj0rqf")
 
                     start_time = time.time()
                     translation = translate(transcription, translate_request.to_lang)
-                    print(translation)
+                    print(f"[T] {translation}")
                     end_time = time.time()
                     translation_time = end_time - start_time
 
-                    # call Rylan's thing
+                    await handle_tts_request(websocket, translation, "NNcatZob7g5UoSGj0rqf")
 
                 file_q.task_done()
 

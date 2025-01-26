@@ -19,15 +19,15 @@ def create_voice_clone(name, file_path, description=None, remove_background_nois
             voice_id = str(str(response).split()[0].split('=')[1].strip("'"))
             requires_verification = bool(str(response).split()[1].split('=')[1])
 
-            print(f"Voice clone created successfully!")
-            print(f"Voice ID: {voice_id}")
-            print(f"Requires Verification: {requires_verification}")
+            #print(f"Voice clone created successfully!")
+            #print(f"Voice ID: {voice_id}")
+            #print(f"Requires Verification: {requires_verification}")
     except Exception as e:
-        print(f"An error occurred while creating the voice clone: {e}")
+        print(f"[ERROR] An error occurred while creating the voice clone: {e}")
     
     return voice_id, requires_verification
 
-# Example usage
+# example usage
 if __name__ == "__main__":
     create_voice_clone(
         name="Rylan",

@@ -1,4 +1,3 @@
-
 import React from 'react'; // Add React import to resolve JSX errors
 import './App.css';
 import { 
@@ -9,9 +8,7 @@ import {
   addCandidate, 
   initiateLocalStream, 
   listenToConnectionEvents, 
-  sendAudioStream, 
-  endCall, 
-  cleanupMediaDevices 
+  sendAudioStream
 } from './modules/RTCModule'; // Make sure the relative paths are correct
 import { initializeApp } from 'firebase/app'; 
 import { getDatabase } from 'firebase/database';
@@ -19,7 +16,6 @@ import config from './config'; // Ensure config file is available
 import { doOffer, doAnswer, doLogin, doCandidate } from './modules/FirebaseModule'; // Correct path for Firebase modules
 import 'webrtc-adapter';
 import VideoChat from './VideoChat'; // Make sure VideoChat is correctly imported
-
 
 class VideoChatContainer extends React.Component {
   constructor (props) {
@@ -65,6 +61,7 @@ class VideoChatContainer extends React.Component {
     };
 
     websocket.onmessage = async (event) => {
+      console.log(event.data);
       if (typeof event.data === 'string') {
         console.log('Metadata:', event.data); // Handle metadata
       } else if (event.data instanceof ArrayBuffer) {
@@ -84,7 +81,7 @@ class VideoChatContainer extends React.Component {
   loadWavFile = async (audioContext) => {
     try {
       const response = await fetch('./pumpkin_FL.wav');
-      console.log("yay")
+      // console.log("yay")
       const arrayBuffer = await response.arrayBuffer();
       const wavBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
