@@ -12,4 +12,3 @@ def translate(text, to):
     ans = response.json()
     print(ans['translatedText'])
     return ans['translatedText']
-
