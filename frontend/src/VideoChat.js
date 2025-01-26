@@ -105,14 +105,13 @@ export default class VideoChat extends React.Component {
               <label id='username' className='username'>{this.state.username}</label>
             </div>
           </div>
-          {this.props.connectedUser ? 
           <div className='my-video'>
             <video ref={this.props.setRemoteVideoRef} autoPlay playsInline></video>
-            
+            {this.props.connectedUser ? 
               <div className='name-container'>
                 <label id='username' className='username'>{this.props.connectedUser}</label> 
-              </div> 
-          </div>: null}
+              </div> : null}
+          </div>
         </div>
         {this.state.showModal && (
               <div className="modal">
