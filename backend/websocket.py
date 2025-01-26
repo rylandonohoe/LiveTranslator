@@ -1,49 +1,65 @@
 import websockets
 import asyncio
 import numpy as np
-import speech_recognition as sr
-import io
+import base64
+import scipy.io.wavfile as wav
+import os
+import json
+import wave
+from pydub import AudioSegment
 
 SAMPLE_RATE = 44100  # Ensure this matches the client-side AudioContext
+SECONDS_PER_FILE = 15
+SAMPLES_PER_FILE = SAMPLE_RATE * SECONDS_PER_FILE
+
+
+NUM_CHANNELS = 1     # Mono audio
+SAMPLE_WIDTH = 2     # 16-bit PCM
+
 
 async def audio_handler(websocket):
     print("Client connected")
-    audio_buffer = np.array([], dtype=np.float32)
-    recognizer = sr.Recognizer()
+    audio_buffer = np.array([], dtype=np.int16)
+      # To keep track of the number of files saved
+    file_count = 0
+    while True:
+        try:
+            message = await websocket.recv()
+            audio_segment = AudioSegment(
+                data=message,
+                sample_width=4,
+                frame_rate = SAMPLE_RATE,
+                channels=1
+            )
+            audio_segment.export(f"output_audio{file_count}.wav", format="wav")
+            print("made audio")
+            file_count += 1
+            if file_count > 40:
+                concatenate_audio(file_count)
+                break
 
-    async for message in websocket:
-        # Convert the received WebSocket message into a numpy array (assuming it's a byte buffer)
-        print("received")
-        audio_frame = np.frombuffer(message, dtype=np.float32)
-        audio_buffer = np.append(audio_buffer, audio_frame)
-
-        if len(audio_buffer) > SAMPLE_RATE:  # Process 1 second of audio
-            # Convert audio buffer to byte format suitable for speech recognition
-            audio_data = audio_buffer[:SAMPLE_RATE].tobytes()
-            audio_buffer = audio_buffer[SAMPLE_RATE:]
-
-            # Use the in-memory audio data with speech_recognition
-            audio_file = io.BytesIO(audio_data)
-            # with sr.AudioFile(audio_file) as source:
-            #     audio = recognizer.record(source)
-            #     try:
-            #         transcription = recognizer.recognize_google(audio)
-            #         print("Transcription:", transcription)
-            #         await websocket.send(transcription)  # Send the transcription back to the client
-            #     except sr.UnknownValueError:
-            #         print("Could not understand audio")
-            #     except sr.RequestError as e:
-            #         print(f"API error: {e}")
+        except websockets.exceptions.ConnectionClosed:
+            print("Connection closed")
+            break
+      
 
     print("Client disconnected")
 
+def concatenate_audio(file_count):
+    clips = []
+    for index in range(file_count):
+        clip = AudioSegment.from_file(f"output_audio{index}.wav")
+        os.remove(f"output_audio{index}.wav")
+        clips.append(clip)
+    final_clip = clips[0]
+    for i in range(1, len(clips)):
+        final_clip = final_clip + clips[i]
+    final_clip.export("final_clip.wav", format = "wav")
+
+
 async def main():
     # Start the server
-    start_server = await websockets.serve(audio_handler, "localhost", 5000)
-    print("Server started at ws://localhost:5000")
-    
-    # Run the server until manually interrupted
-    await start_server.wait_closed()
+    async with websockets.serve(audio_handler, "localhost", 5000) as websocket:
+        await asyncio.Future()
 
-# Start the event loop
 asyncio.run(main())
