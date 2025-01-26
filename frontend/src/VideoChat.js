@@ -38,7 +38,6 @@ export default class VideoChat extends React.Component {
         <video ref={this.props.setRemoteVideoRef} autoPlay playsInline></video>
         <label id='username' className='username'>{this.props.connectedUser}</label>
       </div>
-
     </div>
     </>
   }
