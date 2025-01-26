@@ -16,13 +16,31 @@ export const initiateLocalStream = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: true
+      audio: {
+        echoCancellation: { ideal: true },
+        noiseSuppression: { ideal: true },
+        autoGainControl: { ideal: true }
+      }
     })
-    return stream
+
+    // Mute audio tracks to prevent self-hearing
+    stream.getAudioTracks().forEach(track => {
+      track.enabled = false;
+    });
+
+    return stream;
   } catch (exception) {
     console.error(exception)
   }
 }
+
+export const toggleAudioMute = (localStream) => {
+  const audioTracks = localStream.getAudioTracks();
+  audioTracks.forEach(track => {
+    track.enabled = !track.enabled;
+  });
+}
+
 export const initiateConnection = async () => {
   try {
     // using Google public stun server
