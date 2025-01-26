@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import { createOffer, initiateConnection, startCall, sendAnswer, addCandidate, initiateLocalStream, listenToConnectionEvents, sendAudioStream } from './modules/RTCModule'
+import { createOffer, initiateConnection, startCall, sendAnswer, addCandidate, initiateLocalStream, listenToConnectionEvents, sendAudioStream, endCall, cleanupMediaDevices } from './modules/RTCModule'
 import { initializeApp } from 'firebase/app'; // Import initializeApp from 'firebase/app'
 import { getDatabase } from 'firebase/database';
 
@@ -42,6 +42,14 @@ class VideoChatContainer extends React.Component {
       // Start sending audio data only after the connection is open
       sendAudioStream(localStream, websocket);
     };
+
+    websocket.onmessage = async (event) => {
+      if (typeof event.data === 'string') {
+        console.log('Metadata:', event.data); // Handle metadata (e.g., sample width, channels, etc.)
+      } else if (event.data instanceof ArrayBuffer) {
+        this.playIncomingAudio(event.data);
+      }
+    };
   
     const localConnection = await initiateConnection();
   
@@ -53,7 +61,20 @@ class VideoChatContainer extends React.Component {
     });
   }
   
+  playIncomingAudio = async (audioBuffer) => {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const decodedData = await audioContext.decodeAudioData(audioBuffer);
   
+      const source = audioContext.createBufferSource();
+      source.buffer = decodedData;
+      source.connect(audioContext.destination);
+  
+      source.start();
+    } catch (error) {
+      console.error('Error playing incoming audio:', error);
+    }
+  };
 
     shouldComponentUpdate (nextProps, nextState) {
       if (this.state.database !== nextState.database) {
