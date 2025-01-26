@@ -51,6 +51,10 @@ class VideoChatContainer extends React.Component {
     // Load the .wav file and prepare it for playback
     this.loadWavFile(audioContext);
 
+    localStream.getAudioTracks().muted = true;
+    this.localVideoRef.muted = true;
+
+  
     // Establish WebSocket connection
     const websocket = new WebSocket('ws://localhost:5000');
     
