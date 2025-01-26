@@ -27,18 +27,20 @@ export default class VideoChat extends React.Component {
   }
 
   renderVideos = () => {
-    return <div className={classnames('videos', { active: this.state.isLoggedIn })}>
+    return <>
+    <div className={classnames('videos', { active: this.state.isLoggedIn })}>
       <div>
-        <label>{this.state.username}</label>
 
         <video ref={this.props.setLocalVideoRef} autoPlay playsInline></video>
+        <label id='username' className='username'>{this.state.username}</label>
       </div>
       <div>
-        <label>{this.props.connectedUser}</label>
         <video ref={this.props.setRemoteVideoRef} autoPlay playsInline></video>
+        <label id='username' className='username'>{this.props.connectedUser}</label>
       </div>
 
     </div>
+    </>
   }
 
   renderForms = () => {
