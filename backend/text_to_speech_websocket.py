@@ -18,23 +18,26 @@ async def write_to_local(audio_stream):
             if chunk:
                 f.write(chunk)
 
-async def listen(websocket):
+async def listen(api_websocket, frontend_websocket):
     while True:
         try:
-            message = await websocket.recv()
+            message = await api_websocket.recv()
             data = json.loads(message)
             if data.get("audio"):
-                yield base64.b64decode(data["audio"])
-            elif data.get('isFinal'):
+                audio_chunk = base64.b64decode(data["audio"])
+                await frontend_websocket.send(audio_chunk)
+            elif data.get("isFinal"):
                 break
         except websockets.exceptions.ConnectionClosed:
             print("Connection closed")
             break
 
 async def text_to_speech_ws_streaming(voice_id, model_id):
-    uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id={model_id}"
-    async with websockets.connect(uri) as websocket:
-        await websocket.send(json.dumps({
+    elevenlabs_uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id={model_id}"
+    frontend_uri = "ws://localhost:5000"
+
+    async with websockets.connect(elevenlabs_uri) as api_websocket, websockets.connect(frontend_uri) as frontend_websocket:
+        await api_websocket.send(json.dumps({
             "text": " ",
             "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0, "use_speaker_boost": True},
             "generation_config": {
@@ -42,11 +45,12 @@ async def text_to_speech_ws_streaming(voice_id, model_id):
             },
             "xi_api_key": ELEVENLABS_API_KEY,
         }))
-        text = "The twilight sun cast its warm golden hues upon the vast rolling fields, saturating the landscape with an ethereal glow. Silently, the meandering brook continued its ceaseless journey, whispering secrets only the trees seemed privy to."
-        await websocket.send(json.dumps({"text": text}))
-        await websocket.send(json.dumps({"text": ""}))
 
-        listen_task = asyncio.create_task(write_to_local(listen(websocket)))
+        text = "The twilight sun cast its warm golden hues upon the vast rolling fields, saturating the landscape with an ethereal glow. Silently, the meandering brook continued its ceaseless journey, whispering secrets only the trees seemed privy to."
+        await api_websocket.send(json.dumps({"text": text}))
+        await api_websocket.send(json.dumps({"text": ""}))
+
+        listen_task = asyncio.create_task(write_to_local(listen(api_websocket, frontend_websocket)))
         await listen_task
 
 asyncio.run(text_to_speech_ws_streaming(voice_id, model_id))
