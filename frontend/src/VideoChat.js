@@ -56,25 +56,6 @@ export default class VideoChat extends React.Component {
       langCode = 'ru';
     }
 
-    let langCode = 'en'; 
-    if (lang === '/america.jpg') {
-      langCode = 'en';
-    } else if (lang === '/spain.png') {
-      langCode = 'es';
-    } else if (lang === '/france.png') {
-      langCode = 'fr';
-    } else if (lang === '/china.jpg') {
-      langCode = 'zh';
-    } else if (lang === '/germany.jpg') {
-      langCode = 'de';
-    } else if (lang === '/india.jpg') {
-      langCode = 'hi';
-    } else if (lang === '/italy.jpg') {
-      langCode = 'it';
-    } else if (lang === '/russia.jpg') {
-      langCode = 'ru';
-    }
-
     this.setState({
       selectedLangPic: lang,
       selectedLang: langCode,
@@ -119,7 +100,6 @@ export default class VideoChat extends React.Component {
       <div className='lang-toggle'>
             <button onClick={this.toggleModal} className="toggle-btn">
                 <img
-                  src={this.state.selectedLangPic}
                   src={this.state.selectedLangPic}
                   alt="Selected Language"
                   className="flag"
