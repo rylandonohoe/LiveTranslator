@@ -1,3 +1,4 @@
+
 import React from 'react'; // Add React import to resolve JSX errors
 import './App.css';
 import { 
@@ -62,10 +63,8 @@ class VideoChatContainer extends React.Component {
       console.log('WebSocket connected');
       sendAudioStream(localStream, websocket); // Still send the audio data for other purposes
     };
-  
-    websocket5000.onmessage = async (event) => {
-  
-    websocket5000.onmessage = async (event) => {
+
+    websocket.onmessage = async (event) => {
       if (typeof event.data === 'string') {
         console.log('Metadata:', event.data); // Handle metadata
       } else if (event.data instanceof ArrayBuffer) {
@@ -73,34 +72,8 @@ class VideoChatContainer extends React.Component {
       }
     };
   
-    // WebSocket connection to port 5001 (new functionality)
-    const websocket5001 = new WebSocket('ws://localhost:5001');
-  
-    websocket5001.onopen = () => {
-      console.log('WebSocket connected to port 5001');
-    };
-  
-    websocket5001.onmessage = (event) => {
-      console.log('Message from backend (5001):', event.data);
-    };
-  
-    websocket5001.onclose = () => {
-      console.log('WebSocket disconnected from port 5001');
-    };
-  
-    websocket5001.onerror = (error) => {
-      console.log(error.data)
-      console.error('WebSocket error on port 5001:', error);
-    };
-
-    websocket5000.onerror = (error) => {
-      console.log(error.data)
-      console.error('WebSocket error on port 5000:', error);
-    };
-  
     const localConnection = await initiateConnection();
     this.setState({
-      database,
       database,
       localStream,
       localConnection,
