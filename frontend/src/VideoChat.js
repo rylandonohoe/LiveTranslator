@@ -21,6 +21,21 @@ export default class VideoChat extends React.Component {
     this.setState((prevState) => ({ showModal: !prevState.showModal }));
   };
 
+  sendRequest = async (method, body) => {
+    try {
+      const response = await fetch('http://0.0.0.0:8001/set-lang', {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Handle language selection
   selectLanguage = (lang) => {
     let langCode = 'en'; 
@@ -30,6 +45,16 @@ export default class VideoChat extends React.Component {
       langCode = 'es';
     } else if (lang === '/france.png') {
       langCode = 'fr';
+    } else if (lang === '/china.jpg') {
+      langCode = 'zh';
+    } else if (lang === '/germany.jpg') {
+      langCode = 'de';
+    } else if (lang === '/india.jpg') {
+      langCode = 'hi';
+    } else if (lang === '/italy.jpg') {
+      langCode = 'it';
+    } else if (lang === '/russia.jpg') {
+      langCode = 'ru';
     }
 
     this.setState({
@@ -37,6 +62,7 @@ export default class VideoChat extends React.Component {
       selectedLang: langCode,
       showModal: false,
     });
+    this.sendRequest('POST', {lang: langCode});
   };
 
   onLoginClicked = async () => {
@@ -101,6 +127,21 @@ export default class VideoChat extends React.Component {
                     </button>
                     <button onClick={() => this.selectLanguage('/spain.png')}>
                       <img src="/spain.png" alt="Spanish" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/china.jpg')}>
+                      <img src="/china.jpg" alt="China" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/germany.jpg')}>
+                      <img src="/germany.jpg" alt="Germany" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/india.jpg')}>
+                      <img src="/india.jpg" alt="India" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/italy.jpg')}>
+                      <img src="/italy.jpg" alt="Italy" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/russia.jpg')}>
+                      <img src="/russia.jpg" alt="Rusia" className="flag" />
                     </button>
                   </div>
                   <button onClick={this.toggleModal} className="close-btn">

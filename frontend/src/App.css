@@ -233,9 +233,11 @@ h2 {
 
 .modal-languages {
   display: flex;
-  justify-content: center;
-  gap: 4vw;
-  margin: 20px 0;
+  flex-wrap: wrap; 
+  justify-content: space-evenly;
+  max-width: 250px; 
+  margin-left: 20px;
+
 }
 
 .modal-languages button {
@@ -244,6 +246,7 @@ h2 {
   cursor: pointer;
   border-radius: 9999px;
   box-shadow: none;
+  margin: 10px;
 }
 
 .flag {
@@ -261,6 +264,7 @@ h2 {
   border-radius: 30px;
   cursor: pointer;
   width: 6vw !important;
+  margin-top: 3vh;
 }
 
 .close-btn:hover {
