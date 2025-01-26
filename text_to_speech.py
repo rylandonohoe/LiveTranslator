@@ -1,43 +1,34 @@
-from env import ELEVENLABS_API_KEY
-
-import uuid
-from playsound import playsound
+from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
-from elevenlabs import play, VoiceSettings
+import os
 
-client = ElevenLabs(
-    api_key=ELEVENLABS_API_KEY,
-)
+load_dotenv()
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 
-
-def text_to_speech_file(text: str) -> str:
-    # Calling the text_to_speech conversion API with detailed parameters
-    response = client.text_to_speech.convert(
-        voice_id="pNInz6obpgDQGcFmaJgB", # Adam pre-made voice
-        output_format="mp3_22050_32",
+def text_to_speech(voice_name, text, output_format="mp3_44100_128", model_id="eleven_multilingual_v2"):    
+    voices = client.voices.get_all()
+    
+    for voice in voices.voices:
+        if voice.name == voice_name:
+            voice_id = voice.voice_id
+    
+    audio_data = client.text_to_speech.convert(
+        voice_id=voice_id,
+        output_format=output_format,
         text=text,
-        model_id="eleven_turbo_v2_5", # use the turbo model for low latency
-        voice_settings=VoiceSettings(
-            stability=0.0,
-            similarity_boost=1.0,
-            style=0.0,
-            use_speaker_boost=True,
-        ),
+        model_id=model_id,
     )
-    # uncomment the line below to play the audio back
-    # play(response)
-    # Generating a unique file name for the output MP3 file
-    save_file_path = f"{uuid.uuid4()}.mp3"
-    # Writing the audio to a file
-    with open(save_file_path, "wb") as f:
-        for chunk in response:
-            if chunk:
-                f.write(chunk)
-    print(f"{save_file_path}: A new audio file was saved successfully!")
-    # Return the path of the saved audio file
-    return save_file_path
 
+    output_file = f"{voice_name}_audio.mp3"
+    with open(output_file, "wb") as file:
+        for chunk in audio_data:
+            file.write(chunk)
+        
+    print(f"Audio saved successfully.")
 
-text_to_speech_file("Potassium overload is a serious problem")
-
-#playsound("ae67ac4e-3120-4612-8f87-0d4dfe2fc780.mp3")
+if __name__ == "__main__":
+    text_to_speech(
+        voice_name="Rylan",
+        text="The twilight sun cast its warm golden hues upon the vast rolling fields, saturating the landscape with an ethereal glow. Silently, the meandering brook continued its ceaseless journey, whispering secrets only the trees seemed privy to."
+        )
