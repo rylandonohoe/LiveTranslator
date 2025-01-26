@@ -8,11 +8,12 @@ export default class VideoChat extends React.Component {
     super(props)
     this.state = {
       isLoggedIn: false,
-      userToCall: "",   // Default to empty string, not null
-      username: "",     // Default to empty string, not null
+      userToCall: "",   
+      username: "",     
       errorMessage: null,
       showModal: false, 
-      selectedLang: '/america.jpg',
+      selectedLangPic: '/america.jpg',
+      selectedLang: 'en'
     }
   }
 
@@ -22,9 +23,19 @@ export default class VideoChat extends React.Component {
 
   // Handle language selection
   selectLanguage = (lang) => {
+    let langCode = 'en'; 
+    if (lang === '/america.jpg') {
+      langCode = 'en';
+    } else if (lang === '/spain.png') {
+      langCode = 'es';
+    } else if (lang === '/france.png') {
+      langCode = 'fr';
+    }
+
     this.setState({
-      selectedLang: lang,
-      showModal: false, 
+      selectedLangPic: lang,
+      selectedLang: langCode,
+      showModal: false,
     });
   };
 
@@ -54,7 +65,7 @@ export default class VideoChat extends React.Component {
       <div className='lang-toggle'>
             <button onClick={this.toggleModal} className="toggle-btn">
                 <img
-                  src={this.state.selectedLang}
+                  src={this.state.selectedLangPic}
                   alt="Selected Language"
                   className="flag"
                 />
@@ -68,13 +79,14 @@ export default class VideoChat extends React.Component {
               <label id='username' className='username'>{this.state.username}</label>
             </div>
           </div>
+          {this.props.connectedUser ? 
           <div className='my-video'>
             <video ref={this.props.setRemoteVideoRef} autoPlay playsInline></video>
-            {this.props.connectedUser ? 
+            
               <div className='name-container'>
                 <label id='username' className='username'>{this.props.connectedUser}</label> 
-              </div> : null}
-          </div>
+              </div> 
+          </div>: null}
         </div>
         {this.state.showModal && (
               <div className="modal">
