@@ -7,21 +7,27 @@ from text_to_speech import handle_tts_request
 import time
 from transcription import transcribe_audio
 from translator import translate
+import requests
 
 file_q = queue.Queue()
 grp = 0
 RMS_THRESHOLD = 300
 CHUNK_THRESHOLD = 60
+CURRENT_LANG = 'fr'
+
+
+def get_current_lang():
+    url = "http://0.0.0.0:8001/get-lang"
+    response = requests.get(url)
+    json_response = response.json().get('current_lang')
+    return json_response
+
 
 def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
     global grp
-    if len(audioChunks) < 2:
-        audioChunks.append(wav_segment)
-        return
+    global CURRENT_LANG
 
     if len(audioChunks) > CHUNK_THRESHOLD:
-        #print("threshold reached")
-
         # combine each item in the audio chunk and export into a .wav file
         combined_sounds = audioChunks[0]
         for item in audioChunks[1:]:
@@ -30,14 +36,14 @@ def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
         combined_sounds.export(file_path, format="wav")
 
         # add the file to process in the queue thread
-        request = TranslateRequestModel(file_path)
+        current_lang = get_current_lang()
+        request = TranslateRequestModel(file_path, current_lang)
         file_q.put(request)
         audioChunks.clear()
         grp += 1
     else:
-        #print("The audio is not silent, process it")
-
         audioChunks.append(wav_segment)
+
 
 def file_queue_processor(websocket):
     """
@@ -61,11 +67,9 @@ async def _worker(websocket):
             if not file_q.empty():
                 # each item in the queue is an instance of FileTranslateRequestModel
                 translate_request = file_q.get()
-                #print("found file: " + translate_request.path)
 
                 start_time = time.time()
-                transcription = transcribe_audio(file_input=translate_request.path,
-                                                 language=translate_request.from_lang)
+                transcription = transcribe_audio(file_input=translate_request.path)
                 print(f"[O] {transcription}")
                 end_time = time.time()
                 transcription_time = end_time - start_time
@@ -74,10 +78,13 @@ async def _worker(websocket):
                 os.remove(translate_request.path)
 
                 if transcription:
+<<<<<<< HEAD
                     # if language_from and language_to is the same, its just a transcription
                     if translate_request.from_lang == translate_request.to_lang:
                         await handle_tts_request(websocket, transcription, "J5VtlQALEEjHZn4xrabB")
 
+=======
+>>>>>>> 14c31707fec00f95fff0a52d217bf74e05ac4ac4
                     start_time = time.time()
                     translation = translate(transcription, translate_request.to_lang)
                     print(f"[T] {translation}")

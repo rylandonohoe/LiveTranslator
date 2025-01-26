@@ -36,6 +36,7 @@ export const createOffer = async (connection, localStream, userToCall, doOffer, 
       console.error(exception)
     }
   }
+<<<<<<< HEAD
   
   export const sendAudioStream = async (audioStream, websocket) => {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -53,6 +54,79 @@ export const createOffer = async (connection, localStream, userToCall, doOffer, 
   
     source.connect(processor);
     processor.connect(audioContext.destination);
+=======
+}
+
+ export const sendAudioStream = async (audioStream, websocket) => {
+   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+   const source = audioContext.createMediaStreamSource(audioStream);
+   const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+   processor.onaudioprocess = (event) => {
+     const audioData = event.inputBuffer.getChannelData(0); // Get the audio data
+     const audioBuffer = new Float32Array(audioData.length);
+     audioBuffer.set(audioData);
+
+     // Send the audio buffer over WebSocket
+     websocket.send(audioBuffer.buffer);
+   };
+
+   source.connect(processor);
+   processor.connect(audioContext.destination);
+ };
+
+const arrayBufferToBase64 = (buffer) => {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const length = bytes.byteLength;
+  for (let i = 0; i < length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+};
+
+//export const sendAudioStream = async (audioStream, websocket, selectedLang) => {
+//  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+//  const source = audioContext.createMediaStreamSource(audioStream);
+//  const processor = audioContext.createScriptProcessor(4096, 1, 1);
+//  console.log(selectedLang);
+//
+//  processor.onaudioprocess = (event) => {
+//    const audioData = event.inputBuffer.getChannelData(0); // Get the audio data
+//    const audioBuffer = new Float32Array(audioData.length);
+//    audioBuffer.set(audioData);
+//    const audioBase64 = arrayBufferToBase64(audioBuffer.buffer);
+//
+//    // Create a JSON object with the audio and selected language
+//    const message = {
+//      audio: audioBase64,
+//      language: selectedLang
+//    };
+//
+//    // Send the audio buffer over WebSocket
+//    websocket.send(JSON.stringify(message));
+//  };
+//
+//  source.connect(processor);
+//  processor.connect(audioContext.destination);
+//};
+
+export const listenToConnectionEvents = (conn, username, remoteUsername, database, remoteVideoRef, doCandidate) => {
+  conn.onicecandidate = function (event) {
+    if (event.candidate) {
+      doCandidate(remoteUsername, event.candidate, database, username)
+    }
+  }
+
+  // when a remote user adds stream to the peer connection, we display it
+  conn.ontrack = function (e) {
+    const [remoteStream] = e.streams;
+    const remoteAudioStream = new MediaStream(remoteStream.getAudioTracks());
+    
+    if (!remoteVideoRef.srcObject) {
+      remoteVideoRef.srcObject = remoteAudioStream;
+    }
+>>>>>>> 14c31707fec00f95fff0a52d217bf74e05ac4ac4
   };
   
   export const listenToConnectionEvents = (conn, username, remoteUsername, database, remoteVideoRef, doCandidate) => {

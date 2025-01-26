@@ -1,12 +1,14 @@
 import base64
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import json
 import os
 import websockets
 import time
 
-load_dotenv()
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+from env import ELEVENLABS_API_KEY
+
+#load_dotenv()
+#ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 async def listen_and_forward(frontend_websocket, api_websocket):
     """Listen to ElevenLabs API and forward audio chunks to the frontend."""

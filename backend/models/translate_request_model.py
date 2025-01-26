@@ -5,5 +5,4 @@ from dataclasses import dataclass
 @dataclass
 class TranslateRequestModel:
     path: str
-    from_lang: str = 'en'
     to_lang: str = 'fr'
