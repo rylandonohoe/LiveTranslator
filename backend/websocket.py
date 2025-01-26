@@ -17,12 +17,10 @@ async def audio_handler(websocket):
     chunks = []
     threading.Thread(target=file_queue_processor, daemon=True,
                      args=(websocket,)).start()
-    file_count = 0
 
     while True:
         try:
             message = await websocket.recv()
-            # print(message)
 
             audio_segment = AudioSegment(
                 data=message,

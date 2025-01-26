@@ -205,6 +205,8 @@ video {
   width: 50vw;
   height: auto;
   transform: scaleX(-1);
+  box-shadow: 1px 1px 10px #0c1d2e;
+  height: fit-content;
 }
 
 .name-container {
@@ -330,6 +332,7 @@ h2 {
   cursor: pointer;
   border-radius: 9999px;
   box-shadow: none;
+  margin: 10px;
 }
 
 .flag {
@@ -347,6 +350,7 @@ h2 {
   border-radius: 30px;
   cursor: pointer;
   width: 6vw !important;
+  margin-top: 3vh;
 }
 
 .close-btn:hover {

@@ -2,10 +2,14 @@ import React from 'react';
 import './navbar.css';
 
 function Navbar() {
+
+    const handleRefresh = () => {
+        window.location.reload();
+    }
     return (
         <div className="nav">
             <div className="navbar">
-                <div className="bread-container">
+                <div className="bread-container" >
                     <svg
                         width="15vw"
                         height="15vh"
@@ -15,6 +19,8 @@ function Navbar() {
                         role="img"
                         preserveAspectRatio="xMidYMid meet"
                         className="bread-icon"
+                        onClick={handleRefresh} 
+                        style={{ cursor: 'pointer' }}
                     >
                         <path
                             d="M12.71 56.61s-.71 25.48-.71 29s-.31 7.14 2.48 9.31c1.69 1.32 9.48 7.18 19.87 13.04s24.27 12.83 27.12 14c2.85 1.17 6.11.52 9.77-.84c3.35-1.24 10.84-5.03 21.73-10.56s15.9-8.32 18.94-10.73c2.3-1.82 4.52-4.19 4.19-8.38c-.34-4.19-.24-13.71-.57-17.73c-.34-4.02-.6-18.73-.6-18.73l8.96-16.45s-.22-3.43-1-5.55c-1.16-3.16-3.31-4.86-3.31-4.86L48.91 15.74s-36.07 8.52-38.07 9.68c-2 1.16-7.19 5.47-7.05 13.15c.21 11.03 8.92 18.04 8.92 18.04z"

@@ -56,7 +56,29 @@ export default class VideoChat extends React.Component {
       langCode = 'ru';
     }
 
+    let langCode = 'en'; 
+    if (lang === '/america.jpg') {
+      langCode = 'en';
+    } else if (lang === '/spain.png') {
+      langCode = 'es';
+    } else if (lang === '/france.png') {
+      langCode = 'fr';
+    } else if (lang === '/china.jpg') {
+      langCode = 'zh';
+    } else if (lang === '/germany.jpg') {
+      langCode = 'de';
+    } else if (lang === '/india.jpg') {
+      langCode = 'hi';
+    } else if (lang === '/italy.jpg') {
+      langCode = 'it';
+    } else if (lang === '/russia.jpg') {
+      langCode = 'ru';
+    }
+
     this.setState({
+      selectedLangPic: lang,
+      selectedLang: langCode,
+      showModal: false,
       selectedLangPic: lang,
       selectedLang: langCode,
       showModal: false,
@@ -98,6 +120,7 @@ export default class VideoChat extends React.Component {
             <button onClick={this.toggleModal} className="toggle-btn">
                 <img
                   src={this.state.selectedLangPic}
+                  src={this.state.selectedLangPic}
                   alt="Selected Language"
                   className="flag"
                 />
@@ -132,6 +155,21 @@ export default class VideoChat extends React.Component {
                     </button>
                     <button onClick={() => this.selectLanguage('/spain.png')}>
                       <img src="/spain.png" alt="Spanish" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/china.jpg')}>
+                      <img src="/china.jpg" alt="China" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/germany.jpg')}>
+                      <img src="/germany.jpg" alt="Germany" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/india.jpg')}>
+                      <img src="/india.jpg" alt="India" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/italy.jpg')}>
+                      <img src="/italy.jpg" alt="Italy" className="flag" />
+                    </button>
+                    <button onClick={() => this.selectLanguage('/russia.jpg')}>
+                      <img src="/russia.jpg" alt="Rusia" className="flag" />
                     </button>
                     <button onClick={() => this.selectLanguage('/china.jpg')}>
                       <img src="/china.jpg" alt="China" className="flag" />
