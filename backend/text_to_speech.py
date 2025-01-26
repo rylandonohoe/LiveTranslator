@@ -1,4 +1,3 @@
-import asyncio
 import base64
 from dotenv import load_dotenv
 import json

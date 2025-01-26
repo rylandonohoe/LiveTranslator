@@ -1,5 +1,4 @@
 from google.cloud import speech
-from playsound import playsound
 
 def transcribe_streaming(stream_file: str) -> speech.RecognitionConfig:
     """
