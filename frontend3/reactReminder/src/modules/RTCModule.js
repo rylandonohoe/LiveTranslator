@@ -38,6 +38,30 @@ export const initiateConnection = async () => {
   }
 }
 
+export const sendAudioStream = async (audioStream, websocket) => {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const analyser = audioContext.createAnalyser();
+  const microphone = audioContext.createMediaStreamSource(audioStream);
+  microphone.connect(analyser);
+  
+  const bufferLength = analyser.fftSize;
+  const dataArray = new Uint8Array(bufferLength);
+
+  // Continuously get audio data and send it over the WebSocket
+  const processAudioData = () => {
+    analyser.getByteFrequencyData(dataArray);
+
+    // Convert to a buffer and send over the WebSocket
+    const audioBuffer = new Float32Array(dataArray).buffer;
+    websocket.send(audioBuffer);
+
+    // Repeat the process every 100ms or any other suitable interval
+    setTimeout(processAudioData, 100);
+  };
+
+  processAudioData();
+}
+
 export const listenToConnectionEvents = (conn, username, remoteUsername, database, remoteVideoRef, doCandidate) => {
   conn.onicecandidate = function (event) {
     if (event.candidate) {

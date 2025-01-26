@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import { createOffer, initiateConnection, startCall, sendAnswer, addCandidate, initiateLocalStream, listenToConnectionEvents } from './modules/RTCModule'
+import { createOffer, initiateConnection, startCall, sendAnswer, addCandidate, initiateLocalStream, listenToConnectionEvents, sendAudioStream } from './modules/RTCModule'
 import { initializeApp } from 'firebase/app'; // Import initializeApp from 'firebase/app'
 import { getDatabase } from 'firebase/database';
 
@@ -24,22 +24,36 @@ class VideoChatContainer extends React.Component {
     this.remoteVideoRef = React.createRef()
   }
 
-    componentDidMount = async () => {
+  componentDidMount = async () => {
     const app = initializeApp(config);
     const database = getDatabase(app); // Get the Realtime Database instance
-
-      // getting local video stream
-      const localStream = await initiateLocalStream()
-      this.localVideoRef.srcObject = localStream
-
-      const localConnection = await initiateConnection()
-
-      this.setState({
-        database: database,
-        localStream,
-        localConnection
-      })
-    }
+  
+    // getting local video stream
+    const localStream = await initiateLocalStream()
+    this.localVideoRef.srcObject = localStream
+  
+    // Establish WebSocket connection
+    const websocket = new WebSocket('ws://localhost:5000');
+  
+    // Wait for the WebSocket to open before sending audio
+    websocket.onopen = () => {
+      console.log('WebSocket connected');
+      
+      // Start sending audio data only after the connection is open
+      sendAudioStream(localStream, websocket);
+    };
+  
+    const localConnection = await initiateConnection();
+  
+    this.setState({
+      database: database,
+      localStream,
+      localConnection,
+      websocket,  // Store the WebSocket in state
+    });
+  }
+  
+  
 
     shouldComponentUpdate (nextProps, nextState) {
       if (this.state.database !== nextState.database) {
