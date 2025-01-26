@@ -19,6 +19,7 @@ def process_audio_into_file_queue(wav_segment: AudioSegment, audioChunks: list):
         audioChunks.append(wav_segment)
         return
 
+    #print(wav_segment.rms)
     if len(audioChunks) > CHUNK_THRESHOLD:
         #print("threshold reached")
 
