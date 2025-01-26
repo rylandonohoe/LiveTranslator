@@ -16,7 +16,7 @@ export const initiateLocalStream = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: true
+      audio: {echoCancellation: true, noiseSuppression: true}
     })
     return stream
   } catch (exception) {
@@ -68,13 +68,22 @@ export const listenToConnectionEvents = (conn, username, remoteUsername, databas
       doCandidate(remoteUsername, event.candidate, database, username)
     }
   }
-  
+
   // when a remote user adds stream to the peer connection, we display it
   conn.ontrack = function (e) {
-    if (remoteVideoRef.srcObject !== e.streams[0]) {
-      remoteVideoRef.srcObject = e.streams[0]
+    const [remoteStream] = e.streams;
+    const remoteAudioStream = new MediaStream(remoteStream.getAudioTracks());
+    
+    if (!remoteVideoRef.srcObject) {
+      remoteVideoRef.srcObject = remoteAudioStream;
     }
-  }
+  };
+  
+  // conn.ontrack = function (e) {
+  //   if (remoteVideoRef.srcObject !== e.streams[0]) {
+  //     remoteVideoRef.srcObject = e.streams[0]
+  //   }
+  // }
 }
 
 export const sendAnswer = async (conn, localStream, notif, doAnswer, database, username) => {

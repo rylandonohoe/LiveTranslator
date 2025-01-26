@@ -31,6 +31,9 @@ class VideoChatContainer extends React.Component {
     // getting local video stream
     const localStream = await initiateLocalStream()
     this.localVideoRef.srcObject = localStream
+    localStream.getAudioTracks().muted = true;
+    this.localVideoRef.muted = true;
+
   
     // Establish WebSocket connection
     const websocket = new WebSocket('ws://localhost:5000');
