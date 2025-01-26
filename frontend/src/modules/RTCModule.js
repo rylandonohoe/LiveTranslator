@@ -176,3 +176,4 @@ export const listenToConnectionEvents = (conn, username, remoteUsername, databas
     const candidate = JSON.parse(notif.candidate)
     yourConn.addIceCandidate(new RTCIceCandidate(candidate))
   }
+  
