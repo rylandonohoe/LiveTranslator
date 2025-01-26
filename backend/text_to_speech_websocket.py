@@ -1,7 +1,6 @@
 import asyncio
 import base64
 from dotenv import load_dotenv
-from elevenlabs.client import ElevenLabs
 import json
 import os
 import websockets
@@ -11,12 +10,6 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 voice_id = "NNcatZob7g5UoSGj0rqf"
 model_id = "eleven_multilingual_v2"
-
-async def write_to_local(audio_stream):
-    with open(f'./test.mp3', "wb") as f:
-        async for chunk in audio_stream:
-            if chunk:
-                f.write(chunk)
 
 async def listen(api_websocket, frontend_websocket):
     while True:
@@ -34,7 +27,7 @@ async def listen(api_websocket, frontend_websocket):
 
 async def text_to_speech_ws_streaming(voice_id, model_id):
     elevenlabs_uri = f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream-input?model_id={model_id}"
-    frontend_uri = "ws://localhost:5000"
+    frontend_uri = "ws://localhost:5001"
 
     async with websockets.connect(elevenlabs_uri) as api_websocket, websockets.connect(frontend_uri) as frontend_websocket:
         await api_websocket.send(json.dumps({
@@ -50,7 +43,6 @@ async def text_to_speech_ws_streaming(voice_id, model_id):
         await api_websocket.send(json.dumps({"text": text}))
         await api_websocket.send(json.dumps({"text": ""}))
 
-        listen_task = asyncio.create_task(write_to_local(listen(api_websocket, frontend_websocket)))
-        await listen_task
+        await listen(api_websocket, frontend_websocket)
 
 asyncio.run(text_to_speech_ws_streaming(voice_id, model_id))
