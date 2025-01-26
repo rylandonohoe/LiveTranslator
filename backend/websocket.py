@@ -3,8 +3,10 @@ import asyncio
 from pydub import AudioSegment
 import threading
 from process_audio import file_queue_processor, process_audio_into_file_queue
+import os
 
 SAMPLE_RATE = 44100  # Ensure this matches the client-side AudioContext
+# SAMPLE_RATE = 8000
 
 SECONDS_PER_FILE = 15
 SAMPLES_PER_FILE = SAMPLE_RATE * SECONDS_PER_FILE
@@ -17,11 +19,12 @@ async def audio_handler(websocket):
     print("Client connected")
     chunks = []
     threading.Thread(target=file_queue_processor, daemon=True,
-                     args=websocket).start()
-
+                     args=(websocket,)).start()
+    file_count = 0
     while True:
         try:
             message = await websocket.recv()
+            print(message)
             audio_segment = AudioSegment(
                 data=message,
                 sample_width=4,
