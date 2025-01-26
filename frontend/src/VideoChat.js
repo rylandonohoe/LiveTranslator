@@ -151,21 +151,6 @@ export default class VideoChat extends React.Component {
                     <button onClick={() => this.selectLanguage('/russia.jpg')}>
                       <img src="/russia.jpg" alt="Rusia" className="flag" />
                     </button>
-                    <button onClick={() => this.selectLanguage('/china.jpg')}>
-                      <img src="/china.jpg" alt="China" className="flag" />
-                    </button>
-                    <button onClick={() => this.selectLanguage('/germany.jpg')}>
-                      <img src="/germany.jpg" alt="Germany" className="flag" />
-                    </button>
-                    <button onClick={() => this.selectLanguage('/india.jpg')}>
-                      <img src="/india.jpg" alt="India" className="flag" />
-                    </button>
-                    <button onClick={() => this.selectLanguage('/italy.jpg')}>
-                      <img src="/italy.jpg" alt="Italy" className="flag" />
-                    </button>
-                    <button onClick={() => this.selectLanguage('/russia.jpg')}>
-                      <img src="/russia.jpg" alt="Rusia" className="flag" />
-                    </button>
                   </div>
                   <button onClick={this.toggleModal} className="close-btn">
                     Close
